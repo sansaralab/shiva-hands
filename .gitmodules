@@ -1,0 +1,3 @@
+[submodule "shiva/domain"]
+	path = shiva/domain
+	url = git@github.com:sansaralab/shiva-domain.git
