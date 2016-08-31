@@ -28,15 +28,29 @@ async def main():
 
         if isinstance(data, UserVisit):
             fut = loop.run_in_executor(None, requests.post,
-                                       '%s:%d/api/v1/track_visit'.format(settings.CORE_HOST, settings.CORE_PORT), data._asdict())
+                                       '{0}://{1}:{2}/api/v1/track_visit'.format(settings.CORE_SCHEME,
+                                                                                 settings.CORE_HOST,
+                                                                                 settings.CORE_PORT),
+                                       data._asdict())
             resp = await fut
             print(resp.text)
+            if resp.status_code == 200:
+                await client.send_command('delete', res.job_id)
+            else:
+                await client.send_command('release', res.job_id)
 
         if isinstance(data, UserData):
             fut = loop.run_in_executor(None, requests.post,
-                                       '%s:%d/api/v1/add_data'.format(settings.CORE_HOST, settings.CORE_PORT), data._asdict())
+                                       '{0}://{1}:{2}/api/v1/add_data'.format(settings.CORE_SCHEME,
+                                                                              settings.CORE_HOST,
+                                                                              settings.CORE_PORT),
+                                       data._asdict())
             resp = await fut
             print(resp.text)
+            if resp.status_code == 200:
+                await client.send_command('delete', res.job_id)
+            else:
+                await client.send_command('release', res.job_id)
 
     client.close()
 
